@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | FOODEX{% endblock %}
+
+{% block body %}
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for msg in messages %}
+				<p>{{ msg }}</p>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+
+<div class="row pad">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-body text-center">
+				<h3 class="bold"><i class="glyphicon glyphicon-dashboard"></i> Admin Dashboard</h3>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-12">
+		<ul class="summary">
+			<li class="">Pending Orders <span class="badge">{{ orders|length }}</span></li>
+			<li class="">Items In Menu <span class="badge">{{ products_in_stock }}</span></li>
+			<li class="">Items Out of Stock <span class="badge">{{ products|length - products_in_stock }}</span></li>
+			<li class="">Total Items <span class="badge">{{ products|length }}</span></li>
+		</ul>
+	</div>
+</div>
+<div class="row pad">
+	<div class="col-lg-6 pad">
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<h3 class="panel-title">Pending Orders</h3>
+			</div>
+			<div class="panel-body">
+				Orders that have not been completed
+			</div>
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>ID</th><th>REF</th><th>Customer</th><th>Total</th><th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for order in orders %}
+						<tr>
+							<td>{{ order.id }}</td>
+							<td><a href="{{ url_for('order', order_id=order.id) }}">{{ order.reference }}</a></td>
+							<td>{{ order.first_name + ' ' + order.last_name }}</td>
+							<td>&#8360;. {{ order.order_total() }}</td>
+							<td><span class="badge">{{ order.status }}</span></td>
+							<td><a href="{{ url_for('mark_order_completed', index=order.id) }}">
+								<button type="button" class="btn btn-danger btn-xs">COMPLETE ORDER</button>
+							</a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-lg-6 pad">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Available Products</h3>
+			</div>
+			<div class="panel-body">
+				Products available in the products catalog
+			</div>
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>#</th><th>Name</th><th>Price</th><th>Stock</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for product in products %}
+						<tr>
+							<td>{{ product.id }}</td>
+							<td>{{ product.name }}</td>
+							<td>&#8360;. {{ product.price }}</td>
+							<td>{{ product.stock }} units</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
